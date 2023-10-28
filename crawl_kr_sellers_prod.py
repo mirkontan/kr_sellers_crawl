@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import re
+import bs4
 from bs4 import BeautifulSoup
 from googletrans import Translator
 import base64
