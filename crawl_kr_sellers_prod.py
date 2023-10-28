@@ -33,7 +33,7 @@ menu_options = ["Analyze Sellers", "Overall Database"]
 selected_option = st.sidebar.radio('Select Option', menu_options)
 
 
-password = st.secrets["crawl_kr_sellers_prod.py"]["password"]
+password = st.secrets["crawl_kr_sellers_prod"]["password"]
 entered_password = st.text_input("Enter Password", type="password")
 
 if entered_password == password:
