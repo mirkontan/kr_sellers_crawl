@@ -11,7 +11,7 @@ import pandas as pd
 #         }
 
 # Define the path to your data file
-data_file_path = r'/Users/mirkofontana/Desktop/Script_Python/StreamlitApps/KR_SELLERS_CRAWLING/Korean_Platforms_Sellers_Database.xlsx'
+data_file_path = 'Korean_Platforms_Sellers_Database.xlsx'
 # Load data
 data = pd.read_excel(data_file_path)
 
