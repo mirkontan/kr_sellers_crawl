@@ -64,7 +64,7 @@ if selected_option == "Overall Database":
         st.sidebar.write('SELLERS DATABASE UPDATED!')
 
         # Save the updated data back to the data file
-        updated_data.to_excel(r'/Users/mirkofontana/Desktop/Script_Python/StreamlitApps/KR_SELLERS_CRAWLING/Korean_Platforms_Sellers_Database.xlsx', index=False)
+        updated_data.to_excel('Korean_Platforms_Sellers_Database.xlsx', index=False)
 
 elif selected_option == "Analyze Sellers":
     st.sidebar.header('___________________________________________________')
