@@ -166,8 +166,9 @@ if entered_password == password:
     sellers_in_database_df = overall_kr_sellers_df[overall_kr_sellers_df['SELLER_COMBINED'].isin(df_sellers_urls['SELLER_COMBINED'])]
     # Reset the index of the resulting DataFrame
     sellers_in_database_df = sellers_in_database_df.reset_index(drop=True)
-    st.header('SELLERS ALREADY IN DATABASE')
-    st.write(sellers_in_database_df)
+    if sellers_in_database_df not None:
+        st.header('SELLERS ALREADY IN DATABASE')
+        st.write(sellers_in_database_df)
     
     # Filter overall_kr_sellers_df based on the 'SELLER_COMBINED' values
     df_new_sellers_urls = df_sellers_urls[~df_sellers_urls['SELLER_COMBINED'].isin(overall_kr_sellers_df['SELLER_COMBINED'])]
