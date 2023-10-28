@@ -166,7 +166,7 @@ if entered_password == password:
     sellers_in_database_df = overall_kr_sellers_df[overall_kr_sellers_df['SELLER_COMBINED'].isin(df_sellers_urls['SELLER_COMBINED'])]
     # Reset the index of the resulting DataFrame
     sellers_in_database_df = sellers_in_database_df.reset_index(drop=True)
-    if sellers_in_database_df is not None:
+    if not sellers_in_database_df.empty:
         st.header('SELLERS ALREADY IN DATABASE')
         st.write(sellers_in_database_df)
     
@@ -174,7 +174,7 @@ if entered_password == password:
     df_new_sellers_urls = df_sellers_urls[~df_sellers_urls['SELLER_COMBINED'].isin(overall_kr_sellers_df['SELLER_COMBINED'])]
     # Reset the index of the resulting DataFrame
     df_new_sellers_urls = df_new_sellers_urls.reset_index(drop=True)
-    if df_new_sellers_urls is not None:
+    if not df_new_sellers_urls.empty:
         st.header('NEW SELLERS TO CRAWL')
         st.write(df_new_sellers_urls)
     #-----------------------------/INPUT----------------------------------------
