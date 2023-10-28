@@ -4,6 +4,7 @@ import requests
 import re
 import bs4
 from bs4 import BeautifulSoup
+import googletrans
 from googletrans import Translator
 import base64
 import io
