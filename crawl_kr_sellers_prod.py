@@ -285,8 +285,10 @@ if entered_password == password:
                     data['PLATFORM'].append('INTERPARK')
                     count_interpark += 1
                     st.sidebar.text(f"INTERPARK Sellers Count: {count_interpark}")
-    
-    
+                else:
+                    data['CONTENT_EXTRACTED'].append('PLATFORM NOT SET YET')
+                    data['PLATFORM'].append('UNKNOWN')
+                
     
     
     
