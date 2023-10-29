@@ -37,7 +37,7 @@ password = 'SecretConvey!?'
 entered_password = st.text_input("Enter Password: ", type="password")
 
 if entered_password == password:
-    st.write('Correct Password')
+    st.markdown('<p style="color: green;">Correct Password!</p>', unsafe_allow_html=True)
     # Create content for each menu option
     if selected_option == "Overall Database":
         st.sidebar.header('   ')
@@ -492,6 +492,6 @@ if entered_password == password:
             # Display the download link
             st.markdown(href, unsafe_allow_html=True)
 elif entered_password == '':
-    st.write('Insert Password')
+    st.write('Please insert Password')
 else:
-    st.write('Incorrect Password')
+    st.write('Incorrect Password. Try again!')
