@@ -67,7 +67,7 @@ if entered_password == password:
             # Append the new data to the existing data using pd.concat()
             updated_data = pd.concat([overall_kr_sellers_df, new_sellers_to_upload_df], ignore_index=True)
             updated_data = updated_data.dropna(how='all')
-            st.sidebar.write('SELLERS DATABASE UPDATED!')
+            st.header('DOWNLOAD THE UPDATED 'OVERALL SELLERS INFO DATABASE' AND UPDATE THE DATABASE LOCALLY')
     
             # Save the updated data back to the data file
             updated_data.to_excel('Korean_Platforms_Sellers_Database.xlsx', index=False)
@@ -185,6 +185,7 @@ if entered_password == password:
     if not df_new_sellers_urls.empty:
         st.header('NEW SELLERS TO CRAWL')
         st.write(df_new_sellers_urls)
+        start_crawl_button = st.button('CRAWL NEW SELLERS')
     #-----------------------------/INPUT----------------------------------------
     
     
@@ -265,7 +266,7 @@ if entered_password == password:
     
     
     # Display content for the provided URLs
-    if st.button('Crawl NEW SELLERS'):
+    if start_crawl_button:
         data = {'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
         for url in urls:
             if isinstance(url, str):
