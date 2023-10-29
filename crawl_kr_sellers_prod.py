@@ -67,7 +67,7 @@ if entered_password == password:
             # Append the new data to the existing data using pd.concat()
             updated_data = pd.concat([overall_kr_sellers_df, new_sellers_to_upload_df], ignore_index=True)
             updated_data = updated_data.dropna(how='all')
-            st.header('DOWNLOAD THE UPDATED 'OVERALL SELLERS INFO DATABASE' AND UPDATE THE DATABASE LOCALLY')
+            st.header('DOWNLOAD THE UPDATED OVERALL SELLERS INFO DATABASE AND UPDATE THE DATABASE LOCALLY')
     
             # Save the updated data back to the data file
             updated_data.to_excel('Korean_Platforms_Sellers_Database.xlsx', index=False)
