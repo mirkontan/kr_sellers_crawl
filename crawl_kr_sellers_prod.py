@@ -101,6 +101,7 @@ if entered_password == password:
         cleaned_url = re.sub('http://smart', 'https://smart', url)
         cleaned_url = re.sub(r'^https?://cr.shopping.naver.com', 'https://smartstore.naver.com', cleaned_url)
         cleaned_url = re.sub(r'\?NaP.*', '', cleaned_url)
+        cleaned_url = re.sub(r'\/profile.*', '', cleaned_url)
         username = re.sub(r'^.*\/', '', cleaned_url)
         # Set the platform based on the cleaned URL
         if 'smartstore.naver' in cleaned_url:
