@@ -280,9 +280,9 @@ if entered_password == password:
                 elif 'smartstore.naver' in url:
                     content_extracted = extract_preloaded_state(url)
                     data['CONTENT_EXTRACTED'].append(content_extracted)
-                    data['PLATFORM'].append('STORE NAVER')
+                    data['PLATFORM'].append('NAVER')
                     count_store_naver += 1
-                    st.sidebar.text(f"STORE NAVER Sellers Count: {count_store_naver}")
+                    st.sidebar.text(f"NAVER Sellers Count: {count_store_naver}")
     
                 elif 'interpark' in url:
                     content_extracted = extract_interpark(url)
@@ -311,7 +311,7 @@ if entered_password == password:
         minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
         minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
     
-        storenaver_df = df_content[df_content['PLATFORM'].isin(['STORE NAVER'])]
+        storenaver_df = df_content[df_content['PLATFORM'].isin(['NAVER'])]
         storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'/').str[1]
         
         interpark_df = df_content[df_content['PLATFORM'].isin(['INTERPARK'])]
