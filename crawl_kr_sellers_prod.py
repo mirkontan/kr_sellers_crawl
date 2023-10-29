@@ -98,12 +98,15 @@ if entered_password == password:
         cleaned_url = re.sub(r'\?NaP.*', '', cleaned_url)
         username = re.sub(r'^.*\/', '', cleaned_url)
         # Set the platform based on the cleaned URL
-        if 'naver' in cleaned_url:
+        if 'smartstore.naver' in cleaned_url:
             platform = 'NAVER'
         elif 'interpark' in cleaned_url:
             platform = 'INTERPARK'
         elif 'gmarket' in cleaned_url:
             platform = 'GMARKET'  # You can set a default value if the condition is not met
+        elif 'shopping.naver.com' in cleaned_url:
+            platform = 'SHOPPING NAVER'
+        
         seller_combined = username + '_' + platform
         return cleaned_url, username, platform, seller_combined
     
