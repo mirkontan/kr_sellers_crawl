@@ -491,5 +491,7 @@ if entered_password == password:
         
             # Display the download link
             st.markdown(href, unsafe_allow_html=True)
-else:
+elif entered_password == '':
     st.write('Insert Password')
+else:
+    st.write('Incorrect Password')
