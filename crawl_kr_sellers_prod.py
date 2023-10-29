@@ -494,4 +494,4 @@ if entered_password == password:
 elif entered_password == '':
     st.write('Please insert Password')
 else:
-    st.write('Incorrect Password. Try again!')
+    st.markdown('<p style="color: red;">Incorrect password! Try again!</p>', unsafe_allow_html=True)
