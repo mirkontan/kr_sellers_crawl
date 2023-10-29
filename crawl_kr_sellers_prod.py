@@ -71,7 +71,12 @@ if entered_password == password:
     
             # Save the updated data back to the data file
             updated_data.to_excel('Korean_Platforms_Sellers_Database.xlsx', index=False)
-    
+            
+            with pd.ExcelWriter(excel_data, engine='xlsxwriter', mode='xlsx') as writer:
+            updated_data.to_excel(writer, index=False, sheet_name='SellersInfoDatabase')
+            excel_data.seek(0)
+            st.markdown(f'### [Download updated Overall Database (XLSX)](data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{base64.b64encode(excel_data.read()).decode()})')
+
     elif selected_option == "Analyze Sellers":
         st.sidebar.header('___________________________________________________')
         # Upload XLSX file
