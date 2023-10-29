@@ -191,314 +191,304 @@ if entered_password == password:
     
     #--------------------------CRAWLING DATA------------------------------------
     
-    
-    # Function to extract content inside '<script>window.__PRELOADED_STATE__=' element
-    def extract_minishop(url):
-        try:
-            response = requests.get(url)
-            source_code = response.text
-            # st.write(source_code)
-            # Parse the HTML
-            soup = BeautifulSoup(source_code, 'html.parser')
-            # Find the <div class="seller_info"> element
-            seller_info_div = soup.find('div', class_='seller_info')
-            if seller_info_div:
-                content = seller_info_div.get_text()
-                return content
-            else:
-                return "No 'div sellers info' class found in the source code."
-        except Exception as e:
-            return str(e)
-    
-    
-    def extract_interpark(url):
-        try:
-            response = requests.get(url)
-            source_code = response.text
-            # st.write(source_code)
-            # Regular expression pattern with capturing group
-            pattern = r'<script type="text/javascript">(.*?)</script>'
-            # Use re.findall to find all matches
-            matches = re.findall(pattern, source_code, re.DOTALL)
-            if len(matches) > 1:
-                # Extract the content from the second match (index 1)
-                javascript_content = matches[1]
-                return javascript_content
-            else:
-                return "Not enough matches found."
-        except Exception as e:
-            return str(e)
-    
-    
-    def extract_preloaded_state(url):
-        try:
-            response = requests.get(url)
-            source_code = response.text
-            # st.write(source_code)
-            preloaded_state_match = re.search(r'<script>window.__PRELOADED_STATE__=(.*?)</script>', source_code)
-            if preloaded_state_match:
-                preloaded_state_content = preloaded_state_match.group(1)
-                return preloaded_state_content
-            else:
-                return "No '<script>window.__PRELOADED_STATE__=' element found in the source code."
-        except Exception as e:
-            return str(e)
-    
-    
-    
-    
-    
-    # Create a DataFrame to store the extracted content
-    # df_content = pd.DataFrame(columns=['SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
-    df_content = df_new_sellers_urls.copy()
-    urls = df_content['SELLER_URL']
-    
-    
-    
-    # Initialize counts for each type
-    count_gmarket = 0
-    count_store_naver = 0
-    count_interpark = 0
-    
-    
-    
-    
-    
-    
-    # Display content for the provided URLs
-    if start_crawl_button:
-        data = {'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
-        for url in urls:
-            if isinstance(url, str):
-                st.subheader(f'Content for {url}')
-                if 'minishop.gmarket' in url:
-                    content_extracted = extract_minishop(url)
-                    data['CONTENT_EXTRACTED'].append(content_extracted)
-                    data['PLATFORM'].append('GMARKET')
-                    count_gmarket += 1
-                    st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
-    
-                elif 'smartstore.naver' in url:
-                    content_extracted = extract_preloaded_state(url)
-                    data['CONTENT_EXTRACTED'].append(content_extracted)
-                    data['PLATFORM'].append('NAVER')
-                    count_store_naver += 1
-                    st.sidebar.text(f"NAVER Sellers Count: {count_store_naver}")
-    
-                elif 'interpark' in url:
-                    content_extracted = extract_interpark(url)
-                    data['CONTENT_EXTRACTED'].append(content_extracted)
-                    data['PLATFORM'].append('INTERPARK')
-                    count_interpark += 1
-                    st.sidebar.text(f"INTERPARK Sellers Count: {count_interpark}")
+        
+        # Function to extract content inside '<script>window.__PRELOADED_STATE__=' element
+        def extract_minishop(url):
+            try:
+                response = requests.get(url)
+                source_code = response.text
+                # st.write(source_code)
+                # Parse the HTML
+                soup = BeautifulSoup(source_code, 'html.parser')
+                # Find the <div class="seller_info"> element
+                seller_info_div = soup.find('div', class_='seller_info')
+                if seller_info_div:
+                    content = seller_info_div.get_text()
+                    return content
                 else:
-                    data['CONTENT_EXTRACTED'].append('PLATFORM NOT SET YET')
-                    data['PLATFORM'].append('UNKNOWN')
-                
-    
-    
-    
-        # Ensure all arrays are the same length
-        max_length = max(len(data['SELLER_URL']), len(data['CONTENT_EXTRACTED']), len(data['PLATFORM']))
-        data['SELLER_URL'] = data['SELLER_URL'].tolist() + [None] * (max_length - len(data['SELLER_URL']))
-        data['CONTENT_EXTRACTED'] += [None] * (max_length - len(data['CONTENT_EXTRACTED']))
-        data['PLATFORM'] += [None] * (max_length - len(data['PLATFORM']))
-    
-        df_content = pd.DataFrame(data)
-    
-    
-    
-        minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
-        minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
-        minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
-    
-        storenaver_df = df_content[df_content['PLATFORM'].isin(['NAVER'])]
-        storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'/').str[1]
+                    return "No 'div sellers info' class found in the source code."
+            except Exception as e:
+                return str(e)
         
-        interpark_df = df_content[df_content['PLATFORM'].isin(['INTERPARK'])]
-        interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'.com/').str[1]
-        interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'/').str[1]
-        interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'.kr/').str[1]
-    
-       # Process the 'CONTENT_EXTRACTED' column to extract relevant information
-       
-        minishop_df['COMPANY_VAT_N'] = minishop_df['CONTENT_EXTRACTED'].str.split('사업자번호').str[1]
-        minishop_df['COMPANY_VAT_N'] = minishop_df['COMPANY_VAT_N'].str.split('영업소재지').str[0]
         
-        minishop_df['COMPANY_NAME'] = minishop_df['CONTENT_EXTRACTED'].str.split('상호').str[1]
-        minishop_df['COMPANY_NAME'] = minishop_df['COMPANY_NAME'].str.split('대표자').str[0] 
+        def extract_interpark(url):
+            try:
+                response = requests.get(url)
+                source_code = response.text
+                # st.write(source_code)
+                # Regular expression pattern with capturing group
+                pattern = r'<script type="text/javascript">(.*?)</script>'
+                # Use re.findall to find all matches
+                matches = re.findall(pattern, source_code, re.DOTALL)
+                if len(matches) > 1:
+                    # Extract the content from the second match (index 1)
+                    javascript_content = matches[1]
+                    return javascript_content
+                else:
+                    return "Not enough matches found."
+            except Exception as e:
+                return str(e)
         
-        minishop_df['COMPANY_ADDRESS'] = minishop_df['CONTENT_EXTRACTED'].str.split('영업소재지').str[1]
-        minishop_df['COMPANY_ADDRESS'] = minishop_df['COMPANY_ADDRESS'].str.replace(' ', '', regex=True)
-       
-        minishop_df['COMPANY_REPRESENTATIVE'] = minishop_df['CONTENT_EXTRACTED'].str.split('대표자').str[1]
-        minishop_df['COMPANY_REPRESENTATIVE'] = minishop_df['COMPANY_REPRESENTATIVE'].str.split('전화번호').str[0]
-    
-        minishop_df['COMPANY_TEL_N'] = minishop_df['CONTENT_EXTRACTED'].str.split('전화번호').str[1]
-        minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.split('응대시간').str[0]
-        minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.split('이메일').str[0]
-        minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.replace('팩스번호', '; Fax: ', regex=False)
-    
-        minishop_df['COMPANY_E-MAIL'] = minishop_df['CONTENT_EXTRACTED'].str.split('이메일').str[1]
-        minishop_df['COMPANY_E-MAIL'] = minishop_df['COMPANY_E-MAIL'].str.split('사업자번호').str[0]
-        minishop_df['USERNAME_MATCH'] = ""
-    
-    
-    
-    
-        storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'.com/').str[1]
-    
-        storenaver_df['COMPANY_NAME'] = storenaver_df['CONTENT_EXTRACTED'].str.split('"contactInfo"').str[1]
-        storenaver_df['COMPANY_NAME'] = storenaver_df['CONTENT_EXTRACTED'].str.split('representName"').str[1]
-        storenaver_df['COMPANY_NAME'] = storenaver_df['COMPANY_NAME'].str.replace(r':"', '', regex=False)
-        storenaver_df['COMPANY_NAME'] = storenaver_df['COMPANY_NAME'].str.split('"').str[0]
-    
-        storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['CONTENT_EXTRACTED'].str.split('representativeName"').str[1]
-        storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['COMPANY_REPRESENTATIVE'].str.replace(r':"', '', regex=False)
-        storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['COMPANY_REPRESENTATIVE'].str.split('"').str[0]
-        storenaver_df['COMPANY_VAT_N'] = 'NOT AVAILABLE'
-        storenaver_df['COMPANY_TEL_N'] = 'NOT AVAILABLE'
-        storenaver_df['COMPANY_E-MAIL'] = 'NOT AVAILABLE'
-        storenaver_df['COMPANY_ADDRESS'] = 'NOT AVAILABLE'
-        storenaver_df['USERNAME_MATCH'] = ""
-    
-    
-    
-        interpark_df['COMPANY_NAME'] = interpark_df['CONTENT_EXTRACTED'].str.split('entrNm":"').str[1]
-        interpark_df['COMPANY_NAME'] = interpark_df['COMPANY_NAME'].astype(str)
-        interpark_df['COMPANY_NAME'] = interpark_df['COMPANY_NAME'].str.split('","').str[0]
         
-        interpark_df['COMPANY_VAT_N'] = interpark_df['CONTENT_EXTRACTED'].str.split('bizRegNo":"').str[1]
-        interpark_df['COMPANY_VAT_N'] = interpark_df['COMPANY_VAT_N'].astype(str)
-        interpark_df['COMPANY_VAT_N'] = interpark_df['COMPANY_VAT_N'].str.split('","').str[0]
-    
-        interpark_df['COMPANY_TEL_N'] = interpark_df['CONTENT_EXTRACTED'].str.split('AdminTelno":"').str[1]
-        interpark_df['COMPANY_TEL_N'] = interpark_df['COMPANY_TEL_N'].astype(str)
-        interpark_df['COMPANY_TEL_N'] = interpark_df['COMPANY_TEL_N'].str.split('","').str[0]
-    
-        interpark_df['COMPANY_E-MAIL'] = interpark_df['CONTENT_EXTRACTED'].str.split('AdminEmail":"').str[1]
-        interpark_df['COMPANY_E-MAIL'] = interpark_df['COMPANY_E-MAIL'].astype(str)
-        interpark_df['COMPANY_E-MAIL'] = interpark_df['COMPANY_E-MAIL'].str.split('","').str[0]
-    
-        interpark_df['COMPANY_ADDRESS'] = interpark_df['CONTENT_EXTRACTED'].str.split('addr":"').str[1]
-        interpark_df['COMPANY_ADDRESS'] = interpark_df['COMPANY_ADDRESS'].astype(str)
-        interpark_df['COMPANY_ADDRESS'] = interpark_df['COMPANY_ADDRESS'].str.split('","').str[0]
-    
-        interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['CONTENT_EXTRACTED'].str.split('mainNm":"').str[1]
-        interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['COMPANY_REPRESENTATIVE'].astype(str)
-        interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['COMPANY_REPRESENTATIVE'].str.split('","').str[0]
-    
-        interpark_df['USERNAME_MATCH'] = ""
-    
-        def fill_empty_values(store_df, minishop_df, column_name):
-            for index, row in store_df.iterrows():
-                if pd.isna(row[column_name]) or row[column_name].strip() == "" or row[column_name].strip() == "NOT AVAILABLE":
-                    username = row['SELLER_USERNAME']
-                    matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-                    if not matching_minishop_row.empty:
-                        store_df.at[index, column_name] = matching_minishop_row.iloc[0][column_name]
-                        store_df.at[index, 'USERNAME_MATCH'] = 'Username match with minishop.gmarket'
-    
-        # Usage
-        columns_to_fill = ['COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_VAT_N', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL']
-        for column in columns_to_fill:
-            fill_empty_values(storenaver_df, minishop_df, column)
-    
-    
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_NAME']) or row['COMPANY_NAME'].strip() == "" or row['COMPANY_NAME'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_NAME'] = matching_minishop_row.iloc[0]['COMPANY_NAME']
+        def extract_preloaded_state(url):
+            try:
+                response = requests.get(url)
+                source_code = response.text
+                # st.write(source_code)
+                preloaded_state_match = re.search(r'<script>window.__PRELOADED_STATE__=(.*?)</script>', source_code)
+                if preloaded_state_match:
+                    preloaded_state_content = preloaded_state_match.group(1)
+                    return preloaded_state_content
+                else:
+                    return "No '<script>window.__PRELOADED_STATE__=' element found in the source code."
+            except Exception as e:
+                return str(e)
         
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_ADDRESS']) or row['COMPANY_ADDRESS'].strip() == "" or row['COMPANY_ADDRESS'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_ADDRESS'] = matching_minishop_row.iloc[0]['COMPANY_ADDRESS']
         
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
+        # Create a DataFrame to store the extracted content
+        # df_content = pd.DataFrame(columns=['SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
+        df_content = df_new_sellers_urls.copy()
+        urls = df_content['SELLER_URL']
         
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_REPRESENTATIVE']) or row['COMPANY_REPRESENTATIVE'].strip() == "" or row['COMPANY_REPRESENTATIVE'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_REPRESENTATIVE'] = matching_minishop_row.iloc[0]['COMPANY_REPRESENTATIVE']
+        # Initialize counts for each type
+        count_gmarket = 0
+        count_store_naver = 0
+        count_interpark = 0
         
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
-        # for index, row in storenaver_df.iterrows():
-        #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
-        #         username = row['SELLER_USERNAME']
-        #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
-        #         if not matching_minishop_row.empty:
-        #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
-    
-        df_content = pd.concat([minishop_df, storenaver_df, interpark_df], ignore_index=True)
+        # Display content for the provided URLs
+        if start_crawl_button:
+            data = {'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
+            for url in urls:
+                if isinstance(url, str):
+                    st.subheader(f'Content for {url}')
+                    if 'minishop.gmarket' in url:
+                        content_extracted = extract_minishop(url)
+                        data['CONTENT_EXTRACTED'].append(content_extracted)
+                        data['PLATFORM'].append('GMARKET')
+                        count_gmarket += 1
+                        st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
         
-        # Create a translator instance
-        from googletrans import Translator
-    
-        translator = Translator()
-    
-        # Define a function to translate if the input is not None or NaN
-        def translate_text(text):
-            if pd.notna(text):
-                try:
-                    translations = translator.translate(text, src='ko', dest='en')
-                    if hasattr(translations, 'text'):
-                        return translations.text
+                    elif 'smartstore.naver' in url:
+                        content_extracted = extract_preloaded_state(url)
+                        data['CONTENT_EXTRACTED'].append(content_extracted)
+                        data['PLATFORM'].append('NAVER')
+                        count_store_naver += 1
+                        st.sidebar.text(f"NAVER Sellers Count: {count_store_naver}")
+        
+                    elif 'interpark' in url:
+                        content_extracted = extract_interpark(url)
+                        data['CONTENT_EXTRACTED'].append(content_extracted)
+                        data['PLATFORM'].append('INTERPARK')
+                        count_interpark += 1
+                        st.sidebar.text(f"INTERPARK Sellers Count: {count_interpark}")
                     else:
+                        data['CONTENT_EXTRACTED'].append('PLATFORM NOT SET YET')
+                        data['PLATFORM'].append('UNKNOWN')
+                    
+        
+        
+        
+            # Ensure all arrays are the same length
+            max_length = max(len(data['SELLER_URL']), len(data['CONTENT_EXTRACTED']), len(data['PLATFORM']))
+            data['SELLER_URL'] = data['SELLER_URL'].tolist() + [None] * (max_length - len(data['SELLER_URL']))
+            data['CONTENT_EXTRACTED'] += [None] * (max_length - len(data['CONTENT_EXTRACTED']))
+            data['PLATFORM'] += [None] * (max_length - len(data['PLATFORM']))
+        
+            df_content = pd.DataFrame(data)
+        
+        
+        
+            minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
+            minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
+            minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
+        
+            storenaver_df = df_content[df_content['PLATFORM'].isin(['NAVER'])]
+            storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'/').str[1]
+            
+            interpark_df = df_content[df_content['PLATFORM'].isin(['INTERPARK'])]
+            interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'.com/').str[1]
+            interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'/').str[1]
+            interpark_df['SELLER_USERNAME'] = interpark_df['SELLER_URL'].str.split(r'.kr/').str[1]
+        
+           # Process the 'CONTENT_EXTRACTED' column to extract relevant information
+           
+            minishop_df['COMPANY_VAT_N'] = minishop_df['CONTENT_EXTRACTED'].str.split('사업자번호').str[1]
+            minishop_df['COMPANY_VAT_N'] = minishop_df['COMPANY_VAT_N'].str.split('영업소재지').str[0]
+            
+            minishop_df['COMPANY_NAME'] = minishop_df['CONTENT_EXTRACTED'].str.split('상호').str[1]
+            minishop_df['COMPANY_NAME'] = minishop_df['COMPANY_NAME'].str.split('대표자').str[0] 
+            
+            minishop_df['COMPANY_ADDRESS'] = minishop_df['CONTENT_EXTRACTED'].str.split('영업소재지').str[1]
+            minishop_df['COMPANY_ADDRESS'] = minishop_df['COMPANY_ADDRESS'].str.replace(' ', '', regex=True)
+           
+            minishop_df['COMPANY_REPRESENTATIVE'] = minishop_df['CONTENT_EXTRACTED'].str.split('대표자').str[1]
+            minishop_df['COMPANY_REPRESENTATIVE'] = minishop_df['COMPANY_REPRESENTATIVE'].str.split('전화번호').str[0]
+        
+            minishop_df['COMPANY_TEL_N'] = minishop_df['CONTENT_EXTRACTED'].str.split('전화번호').str[1]
+            minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.split('응대시간').str[0]
+            minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.split('이메일').str[0]
+            minishop_df['COMPANY_TEL_N'] = minishop_df['COMPANY_TEL_N'].str.replace('팩스번호', '; Fax: ', regex=False)
+        
+            minishop_df['COMPANY_E-MAIL'] = minishop_df['CONTENT_EXTRACTED'].str.split('이메일').str[1]
+            minishop_df['COMPANY_E-MAIL'] = minishop_df['COMPANY_E-MAIL'].str.split('사업자번호').str[0]
+            minishop_df['USERNAME_MATCH'] = ""
+        
+        
+        
+        
+            storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'.com/').str[1]
+        
+            storenaver_df['COMPANY_NAME'] = storenaver_df['CONTENT_EXTRACTED'].str.split('"contactInfo"').str[1]
+            storenaver_df['COMPANY_NAME'] = storenaver_df['CONTENT_EXTRACTED'].str.split('representName"').str[1]
+            storenaver_df['COMPANY_NAME'] = storenaver_df['COMPANY_NAME'].str.replace(r':"', '', regex=False)
+            storenaver_df['COMPANY_NAME'] = storenaver_df['COMPANY_NAME'].str.split('"').str[0]
+        
+            storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['CONTENT_EXTRACTED'].str.split('representativeName"').str[1]
+            storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['COMPANY_REPRESENTATIVE'].str.replace(r':"', '', regex=False)
+            storenaver_df['COMPANY_REPRESENTATIVE'] = storenaver_df['COMPANY_REPRESENTATIVE'].str.split('"').str[0]
+            storenaver_df['COMPANY_VAT_N'] = 'NOT AVAILABLE'
+            storenaver_df['COMPANY_TEL_N'] = 'NOT AVAILABLE'
+            storenaver_df['COMPANY_E-MAIL'] = 'NOT AVAILABLE'
+            storenaver_df['COMPANY_ADDRESS'] = 'NOT AVAILABLE'
+            storenaver_df['USERNAME_MATCH'] = ""
+        
+        
+        
+            interpark_df['COMPANY_NAME'] = interpark_df['CONTENT_EXTRACTED'].str.split('entrNm":"').str[1]
+            interpark_df['COMPANY_NAME'] = interpark_df['COMPANY_NAME'].astype(str)
+            interpark_df['COMPANY_NAME'] = interpark_df['COMPANY_NAME'].str.split('","').str[0]
+            
+            interpark_df['COMPANY_VAT_N'] = interpark_df['CONTENT_EXTRACTED'].str.split('bizRegNo":"').str[1]
+            interpark_df['COMPANY_VAT_N'] = interpark_df['COMPANY_VAT_N'].astype(str)
+            interpark_df['COMPANY_VAT_N'] = interpark_df['COMPANY_VAT_N'].str.split('","').str[0]
+        
+            interpark_df['COMPANY_TEL_N'] = interpark_df['CONTENT_EXTRACTED'].str.split('AdminTelno":"').str[1]
+            interpark_df['COMPANY_TEL_N'] = interpark_df['COMPANY_TEL_N'].astype(str)
+            interpark_df['COMPANY_TEL_N'] = interpark_df['COMPANY_TEL_N'].str.split('","').str[0]
+        
+            interpark_df['COMPANY_E-MAIL'] = interpark_df['CONTENT_EXTRACTED'].str.split('AdminEmail":"').str[1]
+            interpark_df['COMPANY_E-MAIL'] = interpark_df['COMPANY_E-MAIL'].astype(str)
+            interpark_df['COMPANY_E-MAIL'] = interpark_df['COMPANY_E-MAIL'].str.split('","').str[0]
+        
+            interpark_df['COMPANY_ADDRESS'] = interpark_df['CONTENT_EXTRACTED'].str.split('addr":"').str[1]
+            interpark_df['COMPANY_ADDRESS'] = interpark_df['COMPANY_ADDRESS'].astype(str)
+            interpark_df['COMPANY_ADDRESS'] = interpark_df['COMPANY_ADDRESS'].str.split('","').str[0]
+        
+            interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['CONTENT_EXTRACTED'].str.split('mainNm":"').str[1]
+            interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['COMPANY_REPRESENTATIVE'].astype(str)
+            interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['COMPANY_REPRESENTATIVE'].str.split('","').str[0]
+        
+            interpark_df['USERNAME_MATCH'] = ""
+        
+            def fill_empty_values(store_df, minishop_df, column_name):
+                for index, row in store_df.iterrows():
+                    if pd.isna(row[column_name]) or row[column_name].strip() == "" or row[column_name].strip() == "NOT AVAILABLE":
+                        username = row['SELLER_USERNAME']
+                        matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+                        if not matching_minishop_row.empty:
+                            store_df.at[index, column_name] = matching_minishop_row.iloc[0][column_name]
+                            store_df.at[index, 'USERNAME_MATCH'] = 'Username match with minishop.gmarket'
+        
+            # Usage
+            columns_to_fill = ['COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_VAT_N', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL']
+            for column in columns_to_fill:
+                fill_empty_values(storenaver_df, minishop_df, column)
+        
+        
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_NAME']) or row['COMPANY_NAME'].strip() == "" or row['COMPANY_NAME'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_NAME'] = matching_minishop_row.iloc[0]['COMPANY_NAME']
+            
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_ADDRESS']) or row['COMPANY_ADDRESS'].strip() == "" or row['COMPANY_ADDRESS'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_ADDRESS'] = matching_minishop_row.iloc[0]['COMPANY_ADDRESS']
+            
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
+            
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_REPRESENTATIVE']) or row['COMPANY_REPRESENTATIVE'].strip() == "" or row['COMPANY_REPRESENTATIVE'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_REPRESENTATIVE'] = matching_minishop_row.iloc[0]['COMPANY_REPRESENTATIVE']
+            
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
+            # for index, row in storenaver_df.iterrows():
+            #     if pd.isna(row['COMPANY_VAT_N']) or row['COMPANY_VAT_N'].strip() == "" or row['COMPANY_VAT_N'].strip() == "NOT AVAILABLE":
+            #         username = row['SELLER_USERNAME']
+            #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
+            #         if not matching_minishop_row.empty:
+            #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
+        
+            df_content = pd.concat([minishop_df, storenaver_df, interpark_df], ignore_index=True)
+            
+            # Create a translator instance
+            from googletrans import Translator
+        
+            translator = Translator()
+        
+            # Define a function to translate if the input is not None or NaN
+            def translate_text(text):
+                if pd.notna(text):
+                    try:
+                        translations = translator.translate(text, src='ko', dest='en')
+                        if hasattr(translations, 'text'):
+                            return translations.text
+                        else:
+                            return text
+                    except Exception as e:
+                        print(f"Translation error: {e}")
                         return text
-                except Exception as e:
-                    print(f"Translation error: {e}")
-                    return text
-            return text
-    
-    
-        # Translate the 'COMPANY_NAME' column from Korean to English
-        df_content['COMPANY_NAME_EN'] = df_content['COMPANY_NAME'].apply(translate_text)
-        df_content['COMPANY_ADDRESS_EN'] = df_content['COMPANY_ADDRESS'].apply(translate_text)
-        df_content['COMPANY_REPRESENTATIVE_EN'] = df_content['COMPANY_REPRESENTATIVE'].apply(translate_text)
-        df_content['SELLER_COMBINED'] = df_content['SELLER_USERNAME'] + '_' + df_content['PLATFORM']
-    
-        df_content = df_content[['SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
-    
-        #   newlines from all columns in the DataFrame
-        df_content = df_content.replace('\n', '', regex=True)
-        st.write('DF CONTENT')    
-        st.dataframe(df_content)
-    
-        df_sellers_urls = pd.concat([df_content, sellers_in_database_df], ignore_index=True)
-    
-        # Convert the DataFrame to XLSX format
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df_sellers_urls.to_excel(writer, sheet_name='SellersInfo', index=False)
-    
-        # Set up the download link
-        b64 = base64.b64encode(output.getvalue()).decode()
-        href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="Korean_Platforms_SellersInfo.xlsx">Download df_content as XLSX</a>'
-    
-        # Display the download link
-        st.markdown(href, unsafe_allow_html=True)
+                return text
+        
+        
+            # Translate the 'COMPANY_NAME' column from Korean to English
+            df_content['COMPANY_NAME_EN'] = df_content['COMPANY_NAME'].apply(translate_text)
+            df_content['COMPANY_ADDRESS_EN'] = df_content['COMPANY_ADDRESS'].apply(translate_text)
+            df_content['COMPANY_REPRESENTATIVE_EN'] = df_content['COMPANY_REPRESENTATIVE'].apply(translate_text)
+            df_content['SELLER_COMBINED'] = df_content['SELLER_USERNAME'] + '_' + df_content['PLATFORM']
+        
+            df_content = df_content[['SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
+        
+            #   newlines from all columns in the DataFrame
+            df_content = df_content.replace('\n', '', regex=True)
+            st.write('DF CONTENT')    
+            st.dataframe(df_content)
+        
+            df_sellers_urls = pd.concat([df_content, sellers_in_database_df], ignore_index=True)
+        
+            # Convert the DataFrame to XLSX format
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df_sellers_urls.to_excel(writer, sheet_name='SellersInfo', index=False)
+        
+            # Set up the download link
+            b64 = base64.b64encode(output.getvalue()).decode()
+            href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="Korean_Platforms_SellersInfo.xlsx">Download df_content as XLSX</a>'
+        
+            # Display the download link
+            st.markdown(href, unsafe_allow_html=True)
 else:
     st.write('Incorrect Password. Try again!')
