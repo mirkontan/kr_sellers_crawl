@@ -215,28 +215,8 @@ if entered_password == password:
                 else:
                     return "No 'div sellers info' class found in the source code."
             except Exception as e:
-                return str(e)
-      
-        def extract_gmarketen(url):
-            try:
-                response = requests.get(url)
-                source_code = response.text
-                st.write(source_code)
-                html_content = response.content
-                st.write(html_content)
-                
-                # Parse the HTML
-                soup = BeautifulSoup(source_code, 'html.parser')
-                # Find the <div class="seller_info"> element
-                script_tags = soup.find_all('script', {'type': 'text/javascript'})
+                return str(e)  
 
-                if script_tags:
-                    content = script_tags.get_text()
-                    return content
-                else:
-                    return "No 'text/javascript' script found in the source code."
-            except Exception as e:
-                return str(e)        
         
         def extract_interpark(url):
             try:
@@ -278,6 +258,7 @@ if entered_password == password:
         urls = df_content['SELLER_URL']
         names = df_content['SELLER']
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
+        st.write(df_content)
         
         # Initialize counts for each type
         count_gmarket = 0
@@ -295,7 +276,6 @@ if entered_password == password:
                         content_extracted = extract_minishop(url)
                         data['CONTENT_EXTRACTED'].append(content_extracted)
                         data['PLATFORM'].append('GMARKET')
-                        data['SELLER'].append(name)
                         count_gmarket += 1
                         st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
                         
