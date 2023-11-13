@@ -272,13 +272,21 @@ if entered_password == password:
                 if response.status_code == 200:
                     html_content = response.text
                     soup = BeautifulSoup(html_content, "html.parser")
-                    link = soup.find("div", class_="box__information_seller").find("a")["href"]
-                    # Do something with the extracted link, such as storing it in a new column
-                    df_content.at[index, 'SELLER_URL'] = link
+                    link = None  # Default value if the element isn't found
+                    seller_info = soup.find("div", class_="box__information_seller")
+                    if seller_info:
+                        link_element = seller_info.find("a")
+                        if link_element and 'href' in link_element.attrs:
+                            link = link_element['href']
+                    # Now check if the link was found
+                    if link:
+                        # Do something with the extracted link
+                        df_content.at[index, 'SELLER_URL'] = link
                 else:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
+                    
         st.write(df_content)
-        
+    
         # Initialize counts for each type
         count_gmarket = 0
         count_store_naver = 0
