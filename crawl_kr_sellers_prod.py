@@ -95,7 +95,7 @@ if entered_password == password:
     
     
     # Initialize a sellers urls DataFrame
-    df_sellers_urls = pd.DataFrame({'SELLER_URL': [], 'SELLER_USERNAME': [], 'PLATFORM': [], 'SELLER_URL_original': [], 'SELLER_COMBINED': []})
+    df_sellers_urls = pd.DataFrame({'SELLER': [], 'SELLER_URL': [], 'SELLER_USERNAME': [], 'PLATFORM': [], 'SELLER_URL_original': [], 'SELLER_COMBINED': []})
     
     def clean_url(url):
         cleaned_url = re.sub('http://smart', 'https://smart', url)
@@ -142,7 +142,7 @@ if entered_password == password:
             # Concatenate the two DataFrames vertically
             df_sellers_urls = pd.concat([df_sellers_urls, uploaded_df], ignore_index=True)
             # Apply 'clean_url' function to every URL in 'SELLER_URL_original' column
-            df_sellers_urls[['SELLER_URL', 'SELLER_USERNAME', 'PLATFORM', 'SELLER_COMBINED']] = uploaded_df['SELLER_URL_original'].apply(clean_url).apply(pd.Series)
+            df_sellers_urls[['SELLER', 'SELLER_URL', 'SELLER_USERNAME', 'PLATFORM', 'SELLER_COMBINED']] = uploaded_df['SELLER_URL_original'].apply(clean_url).apply(pd.Series)
     
     
             # Count the number of non-empty URLs
