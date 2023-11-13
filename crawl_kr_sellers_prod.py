@@ -276,6 +276,7 @@ if entered_password == password:
         # df_content = pd.DataFrame(columns=['SELLER', 'SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
         df_content = df_new_sellers_urls.copy()
         urls = df_content['SELLER_URL']
+        names = df_content['SELLER']
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
         
         # Initialize counts for each type
@@ -286,7 +287,7 @@ if entered_password == password:
         
         # Display content for the provided URLs
         if start_crawl_button:
-            data = {'SELLER': name, 'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
+            data = {'SELLER': names, 'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
             for url in urls:
                 if isinstance(url, str):
                     st.subheader(f'Content for {url}')
