@@ -509,7 +509,7 @@ if entered_password == password:
             df_content['COMPANY_REPRESENTATIVE_EN'] = df_content['COMPANY_REPRESENTATIVE'].apply(translate_text)
             df_content['SELLER_COMBINED'] = df_content['SELLER_USERNAME'] + '_' + df_content['PLATFORM']
         
-            df_content = df_content[['SELLER', 'SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL_COPY', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
+            df_content = df_content[['SELLER', 'SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
         
             #   newlines from all columns in the DataFrame
             df_content = df_content.replace('\n', '', regex=True)
