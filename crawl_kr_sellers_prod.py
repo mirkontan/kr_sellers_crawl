@@ -296,7 +296,7 @@ if entered_password == password:
         
         # Display content for the provided URLs
         if start_crawl_button:
-            data = {'SELLER': names, 'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
+            data = {'SELLER': names, 'SELLER_URL': urls, 'SELLER_URL_COPY': urlcopy, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
             for url in urls:
                 if isinstance(url, str):
                     st.subheader(f'Content for {url}')
