@@ -252,10 +252,17 @@ if entered_password == password:
         # Create a DataFrame to store the extracted content
         # df_content = pd.DataFrame(columns=['SELLER', 'SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
         df_content = df_new_sellers_urls.copy()
+        # Make a copy of the 'SELLER_URL' column
+        df_content['SELLER_URL_COPY'] = df_content['SELLER_URL']
+       
         urls = df_content['SELLER_URL']
         names = df_content['SELLER']
+        urlcopy = df_content['SELLER_URL_COPY']
+        
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
         st.write(df_content)
+        
+
 
         # Iterate through rows and apply the function to the specified rows
         for index, row in df_content.iterrows():
@@ -498,7 +505,7 @@ if entered_password == password:
             df_content['COMPANY_REPRESENTATIVE_EN'] = df_content['COMPANY_REPRESENTATIVE'].apply(translate_text)
             df_content['SELLER_COMBINED'] = df_content['SELLER_USERNAME'] + '_' + df_content['PLATFORM']
         
-            df_content = df_content[['SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
+            df_content = df_content[['SELLER', 'SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
         
             #   newlines from all columns in the DataFrame
             df_content = df_content.replace('\n', '', regex=True)
