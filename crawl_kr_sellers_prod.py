@@ -281,6 +281,7 @@ if entered_password == password:
                     # Now check if the link was found
                     if link:
                         # Do something with the extracted link
+                        df_content.at[index, 'SELLER_URL_COPY'] = urlcopy
                         df_content.at[index, 'SELLER_URL'] = link
                 else:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
