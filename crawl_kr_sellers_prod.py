@@ -132,7 +132,7 @@ if entered_password == password:
             if 'SELLER_URL' in uploaded_df.columns:
                 uploaded_df.rename(columns={'SELLER_URL': 'SELLER_URL_original'}, inplace=True)
             if 'SELLER URL' in uploaded_df.columns:
-            uploaded_df.rename(columns={'SELLER URL': 'SELLER_URL_original'}, inplace=True)
+                uploaded_df.rename(columns={'SELLER URL': 'SELLER_URL_original'}, inplace=True)
             # st.write(df_urls)
             # Assign an index to each row
             uploaded_df['INDEX'] = range(len(uploaded_df))
