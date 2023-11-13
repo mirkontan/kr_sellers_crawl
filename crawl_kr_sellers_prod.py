@@ -260,7 +260,7 @@ if entered_password == password:
         urlcopy = df_content['SELLER_URL_COPY']
         
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
-        st.write(df_content)
+        # st.write(df_content)
         
 
 
@@ -285,7 +285,7 @@ if entered_password == password:
                 else:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
                     
-        st.write(df_content)
+        # st.write(df_content)
     
         # Initialize counts for each type
         count_gmarket = 0
@@ -339,11 +339,6 @@ if entered_password == password:
             minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
-
-            gmarketen_df = df_content[df_content['PLATFORM'].isin(['GMARKET EN', None])]
-            gmarketen_df['SELLER_USERNAME'] = gmarketen_df['SELLER_URL'].str.split(r'.com/').str[1]
-            gmarketen_df['SELLER_USERNAME'] = gmarketen_df['SELLER_URL'].str.split(r'.kr/').str[1]
-
             
             storenaver_df = df_content[df_content['PLATFORM'].isin(['NAVER'])]
             storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'/').str[1]
@@ -485,7 +480,7 @@ if entered_password == password:
             #         if not matching_minishop_row.empty:
             #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
         
-            df_content = pd.concat([minishop_df, storenaver_df, interpark_df, gmarketen_df], ignore_index=True)
+            df_content = pd.concat([minishop_df, storenaver_df, interpark_df], ignore_index=True)
             
             # Create a translator instance
             from googletrans import Translator
@@ -513,7 +508,7 @@ if entered_password == password:
             df_content['COMPANY_REPRESENTATIVE_EN'] = df_content['COMPANY_REPRESENTATIVE'].apply(translate_text)
             df_content['SELLER_COMBINED'] = df_content['SELLER_USERNAME'] + '_' + df_content['PLATFORM']
         
-            df_content = df_content[['SELLER', 'SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
+            df_content = df_content[['SELLER', 'SELLER_USERNAME', 'SELLER_COMBINED', 'USERNAME_MATCH', 'SELLER_URL_COPY', 'PLATFORM', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_ADDRESS', 'COMPANY_NAME_EN', 'COMPANY_ADDRESS_EN',  'COMPANY_REPRESENTATIVE', 'COMPANY_REPRESENTATIVE_EN', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED']]
         
             #   newlines from all columns in the DataFrame
             df_content = df_content.replace('\n', '', regex=True)
