@@ -267,7 +267,7 @@ if entered_password == password:
                     soup = BeautifulSoup(html_content, "html.parser")
                     link = soup.find("div", class_="box__information_seller").find("a")["href"]
                     # Do something with the extracted link, such as storing it in a new column
-                    df_content.at[index, 'Extracted_Link'] = link
+                    df_content.at[index, 'SELLER_URL'] = link
                 else:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
         st.write(df_content)
