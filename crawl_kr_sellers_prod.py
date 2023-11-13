@@ -88,10 +88,7 @@ if entered_password == password:
         st.sidebar.header('Type URLs for sellers to analyze')
         user_input = st.sidebar.text_area("Enter URLs (one per line)")
         # Allow the user to upload an Excel file
-    
-    
-    
-    
+      
     
     
     # Initialize a sellers urls DataFrame
@@ -258,6 +255,21 @@ if entered_password == password:
         urls = df_content['SELLER_URL']
         names = df_content['SELLER']
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
+        st.write(df_content)
+
+        # Iterate through rows and apply the function to the specified rows
+        for index, row in df_content.iterrows():
+            if row['PLATFORM'] == 'GMARKET EN':
+                url = row['SEARCH_URL']  # Assuming the column name for URLs is SELLER_URL
+                response = requests.get(url)
+                if response.status_code == 200:
+                    html_content = response.text
+                    soup = BeautifulSoup(html_content, "html.parser")
+                    link = soup.find("div", class_="box__information_seller").find("a")["href"]
+                    # Do something with the extracted link, such as storing it in a new column
+                    df_content.at[index, 'Extracted_Link'] = link
+                else:
+                    st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
         st.write(df_content)
         
         # Initialize counts for each type
