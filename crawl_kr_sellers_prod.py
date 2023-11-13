@@ -220,6 +220,9 @@ if entered_password == password:
                 response = requests.get(url)
                 source_code = response.text
                 st.write(source_code)
+                html_content = response.content
+                st.write(html_content)
+                
                 # Parse the HTML
                 soup = BeautifulSoup(source_code, 'html.parser')
                 # Find the <div class="seller_info"> element
