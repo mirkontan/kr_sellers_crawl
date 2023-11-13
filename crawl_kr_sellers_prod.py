@@ -214,7 +214,24 @@ if entered_password == password:
                     return "No 'div sellers info' class found in the source code."
             except Exception as e:
                 return str(e)
-        
+      
+        def extract_gmarketen(url):
+            try:
+                response = requests.get(url)
+                source_code = response.text
+                # st.write(source_code)
+                # Parse the HTML
+                soup = BeautifulSoup(source_code, 'html.parser')
+                # Find the <div class="seller_info"> element
+                script_tags = soup.find_all('script', {'type': 'text/javascript'})
+
+                if script_tags:
+                    content = seller_info_div.get_text()
+                    return content
+                else:
+                    return "No 'text/javascript' script found in the source code."
+            except Exception as e:
+                return str(e)        
         
         def extract_interpark(url):
             try:
@@ -259,6 +276,7 @@ if entered_password == password:
         count_gmarket = 0
         count_store_naver = 0
         count_interpark = 0
+        count_gmarketen = 0
         
         # Display content for the provided URLs
         if start_crawl_button:
@@ -272,7 +290,14 @@ if entered_password == password:
                         data['PLATFORM'].append('GMARKET')
                         count_gmarket += 1
                         st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
-        
+                        
+                    elif 'gshop.gmarket' in url:
+                        content_extracted = extract_gmarketen(url)
+                        data['CONTENT_EXTRACTED'].append(content_extracted)
+                        data['PLATFORM'].append('GMARKET EN')
+                        count_gmarketen += 1
+                        st.sidebar.text(f"GMARKET EN Sellers Count: {count_gmarketen}")
+                        
                     elif 'smartstore.naver' in url:
                         content_extracted = extract_preloaded_state(url)
                         data['CONTENT_EXTRACTED'].append(content_extracted)
@@ -306,7 +331,12 @@ if entered_password == password:
             minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
-        
+
+            gmarketen_df = df_content[df_content['PLATFORM'].isin(['GMARKET EN', None])]
+            gmarketen_df['SELLER_USERNAME'] = gmarketen_df['SELLER_URL'].str.split(r'.com/').str[1]
+            gmarketen_df['SELLER_USERNAME'] = gmarketen_df['SELLER_URL'].str.split(r'.kr/').str[1]
+
+            
             storenaver_df = df_content[df_content['PLATFORM'].isin(['NAVER'])]
             storenaver_df['SELLER_USERNAME'] = storenaver_df['SELLER_URL'].str.split(r'/').str[1]
             
@@ -447,7 +477,7 @@ if entered_password == password:
             #         if not matching_minishop_row.empty:
             #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
         
-            df_content = pd.concat([minishop_df, storenaver_df, interpark_df], ignore_index=True)
+            df_content = pd.concat([minishop_df, storenaver_df, interpark_df, gmarketen_df], ignore_index=True)
             
             # Create a translator instance
             from googletrans import Translator
