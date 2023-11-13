@@ -219,14 +219,14 @@ if entered_password == password:
             try:
                 response = requests.get(url)
                 source_code = response.text
-                # st.write(source_code)
+                st.write(source_code)
                 # Parse the HTML
                 soup = BeautifulSoup(source_code, 'html.parser')
                 # Find the <div class="seller_info"> element
                 script_tags = soup.find_all('script', {'type': 'text/javascript'})
 
                 if script_tags:
-                    content = seller_info_div.get_text()
+                    content = script_tags.get_text()
                     return content
                 else:
                     return "No 'text/javascript' script found in the source code."
