@@ -273,9 +273,10 @@ if entered_password == password:
         
         
         # Create a DataFrame to store the extracted content
-        # df_content = pd.DataFrame(columns=['SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
+        # df_content = pd.DataFrame(columns=['SELLER', 'SELLER_URL', 'COMPANY_VAT_N', 'COMPANY_NAME', 'COMPANY_REPRESENTATIVE', 'COMPANY_TEL_N', 'COMPANY_E-MAIL', 'CONTENT_EXTRACTED'])
         df_content = df_new_sellers_urls.copy()
         urls = df_content['SELLER_URL']
+        df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
         
         # Initialize counts for each type
         count_gmarket = 0
@@ -285,23 +286,17 @@ if entered_password == password:
         
         # Display content for the provided URLs
         if start_crawl_button:
-            data = {'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
+            data = {'SELLER': name, 'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
             for url in urls:
                 if isinstance(url, str):
                     st.subheader(f'Content for {url}')
-                    if 'minishop.gmarket' in url:
+                    if 'gmarket' in url:
                         content_extracted = extract_minishop(url)
                         data['CONTENT_EXTRACTED'].append(content_extracted)
                         data['PLATFORM'].append('GMARKET')
+                        data['SELLER'].append(name)
                         count_gmarket += 1
                         st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
-                        
-                    elif 'gshop.gmarket' in url:
-                        content_extracted = extract_gmarketen(url)
-                        data['CONTENT_EXTRACTED'].append(content_extracted)
-                        data['PLATFORM'].append('GMARKET EN')
-                        count_gmarketen += 1
-                        st.sidebar.text(f"GMARKET EN Sellers Count: {count_gmarketen}")
                         
                     elif 'smartstore.naver' in url:
                         content_extracted = extract_preloaded_state(url)
