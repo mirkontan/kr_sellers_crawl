@@ -332,10 +332,17 @@ if entered_password == password:
         
         # Apply the function to the DataFrame
         df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
-        
         # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
         df_content = pd.concat([df_content.drop(['SELLER_INFO'], axis=1), df_content['SELLER_INFO'].apply(pd.Series)], axis=1)
-        
+       
+        df_content['COMPANY_VAT_N'] = df_content['Business Registration Number'] 
+        df_content['COMPANY_TEL_N'] = df_content['Contact NO.'] 
+        df_content['COMPANY_EMAIL'] = df_content['E-mail'] 
+        df_content['COMPANY_ADDRESS'] = df_content['Location of Headquarters'] 
+        df_content['COMPANY_REG_N_2'] = df_content['Registration of Online Marketing Business'] 
+        df_content['COMPANY_REPRESENTATIVE'] = df_content['Shop Name/Representative'].str.split(r'/').str[1] 
+        df_content['COMPANY_NAME'] = df_content['Shop Name/Representative'].str.split(r'/').str[0] 
+              
         # Display the DataFrame
         st.write('11ST DF')
         st.write(df_content)
