@@ -334,20 +334,24 @@ if entered_password == password:
                     return None
             else:
                 return None
-        # Check if the DataFrame is not empty
-        if not elevenst_df.empty:
+
+        
+        if not elevenst_df.empty and 'SELLER_INFO' in elevenst_df.columns:
             # Apply the function to the DataFrame
             elevenst_df['SELLER_INFO'] = elevenst_df.apply(extract_seller_info, axis=1)
-            # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
-            elevenst_df = pd.concat([elevenst_df.drop(['SELLER_INFO'], axis=1), elevenst_df['SELLER_INFO'].apply(pd.Series)], axis=1)
-           
-            elevenst_df['COMPANY_VAT_N'] = elevenst_df['Business Registration Number'] 
-            elevenst_df['COMPANY_TEL_N'] = elevenst_df['Contact NO.'].str.split("What").str[0]
-            elevenst_df['COMPANY_E-MAIL'] = elevenst_df['E-mail'] 
-            elevenst_df['COMPANY_ADDRESS'] = elevenst_df['Location of Headquarters'] 
-            elevenst_df['COMPANY_REG_N_2'] = elevenst_df['Registration of Online Marketing Business'] 
-            elevenst_df['COMPANY_REPRESENTATIVE'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[1] 
-            elevenst_df['COMPANY_NAME'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[0] 
+        
+            # Check if 'SELLER_INFO' column exists
+            if 'SELLER_INFO' in elevenst_df.columns:
+                # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
+                elevenst_df = pd.concat([elevenst_df.drop(['SELLER_INFO'], axis=1), elevenst_df['SELLER_INFO'].apply(pd.Series)], axis=1)
+                # Extract specific information to new columns
+                elevenst_df['COMPANY_VAT_N'] = elevenst_df['Business Registration Number'] 
+                elevenst_df['COMPANY_TEL_N'] = elevenst_df['Contact NO.'].str.split("What").str[0]
+                elevenst_df['COMPANY_E-MAIL'] = elevenst_df['E-mail'] 
+                elevenst_df['COMPANY_ADDRESS'] = elevenst_df['Location of Headquarters'] 
+                elevenst_df['COMPANY_REG_N_2'] = elevenst_df['Registration of Online Marketing Business'] 
+                elevenst_df['COMPANY_REPRESENTATIVE'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[1] 
+                elevenst_df['COMPANY_NAME'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[0] 
                   
             # Display the DataFrame
             # st.write('11ST DF')
