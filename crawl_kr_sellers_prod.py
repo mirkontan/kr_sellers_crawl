@@ -257,12 +257,71 @@ if entered_password == password:
        
         urls = df_content['SELLER_URL']
         names = df_content['SELLER']
-        urlcopy = df_content['SELLER_URL_COPY']
         
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
         # st.write(df_content)
         
 
+
+        def extract_11st_url(row):
+            # Check if the platform is '11ST'
+            if row['PLATFORM'] == '11ST':
+                url = row['SELLER_URL']
+                # Make a request to the seller URL
+                response = requests.get(url)
+                if response.status_code == 200:
+                    html_content = response.text
+                    soup = BeautifulSoup(html_content, 'html.parser')
+                    # Find the anchor tag within the specified div
+                    anchor_tag = soup.find('div', class_='photo_wrap').find('a')
+                    # Extract the URL if the anchor tag is found
+                    if anchor_tag and 'href' in anchor_tag.attrs:
+                        return anchor_tag['href']
+                    else:
+                        return None
+                else:
+                    print(f"Failed to fetch the URL for {url}: {response.status_code}")
+                    return None
+            else:
+                return None
+        
+        # Apply the function to the DataFrame
+        df_content['SELLER_URL'] = df_content.apply(extract_11st_url, axis=1)
+        
+        def extract_seller_info(row):
+            # Check if the platform is '11ST'
+            if row['PLATFORM'] == '11ST':
+                url = row['SELLER_URL']
+                # Make a request to the seller URL
+                response = requests.get(url)
+                if response.status_code == 200:
+                    html_content = response.text
+                    soup = BeautifulSoup(html_content, 'html.parser')
+                    # Find the table with class 'tbl_prdinfo'
+                    seller_info_table = soup.find('table', class_='tbl_prdinfo')
+                    # Initialize a dictionary to store extracted information
+                    extracted_info = {}
+                    if seller_info_table:
+                        # Find all table rows
+                        rows = seller_info_table.find_all('tr')
+                        # Iterate through rows and extract information
+                        for row in rows:
+                            columns = row.find_all(['th', 'td'])
+                            if columns:
+                                key = columns[0].get_text(strip=True)
+                                value = columns[1].get_text(strip=True)
+                                extracted_info[key] = value
+                    return extracted_info
+                else:
+                    print(f"Failed to fetch the URL for {url}: {response.status_code}")
+                    return None
+            else:
+                return None
+        # Apply the function to the DataFrame
+        df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
+
+        st.write('11ST DF')
+        st.write(df_content)
 
         # Iterate through rows and apply the function to the specified rows
         for index, row in df_content.iterrows():
@@ -281,7 +340,6 @@ if entered_password == password:
                     # Now check if the link was found
                     if link:
                         # Do something with the extracted link
-                        df_content.at[index, 'SELLER_URL_COPY'] = urlcopy
                         df_content.at[index, 'SELLER_URL'] = link
                 else:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
@@ -293,10 +351,11 @@ if entered_password == password:
         count_store_naver = 0
         count_interpark = 0
         count_gmarketen = 0
+        count_11st = 0
         
         # Display content for the provided URLs
         if start_crawl_button:
-            data = {'SELLER': names, 'SELLER_URL': urls, 'SELLER_URL_COPY': urlcopy, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
+            data = {'SELLER': names, 'SELLER_URL': urls, 'CONTENT_EXTRACTED': [], 'PLATFORM': []}
             for url in urls:
                 if isinstance(url, str):
                     st.subheader(f'Content for {url}')
@@ -306,7 +365,7 @@ if entered_password == password:
                         data['PLATFORM'].append('GMARKET')
                         count_gmarket += 1
                         st.sidebar.text(f"GMARKET Sellers Count: {count_gmarket}")
-                        
+                                
                     elif 'smartstore.naver' in url:
                         content_extracted = extract_preloaded_state(url)
                         data['CONTENT_EXTRACTED'].append(content_extracted)
@@ -320,6 +379,13 @@ if entered_password == password:
                         data['PLATFORM'].append('INTERPARK')
                         count_interpark += 1
                         st.sidebar.text(f"INTERPARK Sellers Count: {count_interpark}")
+                        
+                    elif '11st' in url:
+                        content_extracted = extract_11st(url)
+                        data['CONTENT_EXTRACTED'].append(content_extracted)
+                        data['PLATFORM'].append('11ST')
+                        count_11st += 1
+                        st.sidebar.text(f"11ST Sellers Count: {count_11st}")
                     else:
                         data['CONTENT_EXTRACTED'].append('PLATFORM NOT SET YET')
                         data['PLATFORM'].append('UNKNOWN')
