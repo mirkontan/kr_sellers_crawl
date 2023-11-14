@@ -318,6 +318,8 @@ if entered_password == password:
                                     key = columns[0].get_text(strip=True)
                                     value = columns[1].get_text(strip=True)
                                     extracted_info[key] = value        
+                        
+                        # Return the dictionary directly for further processing
                         return extracted_info
                     else:
                         print(f"Could not find 'Seller Information' section on the page for {url}")
@@ -330,12 +332,16 @@ if entered_password == password:
         
         # Apply the function to the DataFrame
         df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
-        df_content['COMPANY_VAT_N'] = df_content['Business Registration Number']
-        # "Business Registration Number":"","Category of Business":"Individual entrepreneurs","Contact NO.":"010-9569-7230What's this Contact NO. info *The phone connection can be difficult because time difference of seller.In this case,contact Customer Service 11ST(1599-0110),quick consultation will help you to be possible.","E-mail":"go.mihyekim@gmail.com","Items completed with authentication":"Business Registration Number, Shop Name","Location of Headquarters":"경기도 안산시 단원구 이삭로 6 (고잔동) 3층 3450호","Registration of Online Marketing Business":"2023-경기안산-0812","Seller":"EuropeBest (mihye0723)","Shop Name/Representative":"여유여우 / 김미혜"}
-     
+        
+        # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
+        df_content = pd.concat([df_content.drop(['SELLER_INFO'], axis=1), df_content['SELLER_INFO'].apply(pd.Series)], axis=1)
+        
+        # Display the DataFrame
         st.write('11ST DF')
         st.write(df_content)
 
+        # "Business Registration Number":"","Category of Business":"Individual entrepreneurs","Contact NO.":"010-9569-7230What's this Contact NO. info *The phone connection can be difficult because time difference of seller.In this case,contact Customer Service 11ST(1599-0110),quick consultation will help you to be possible.","E-mail":"go.mihyekim@gmail.com","Items completed with authentication":"Business Registration Number, Shop Name","Location of Headquarters":"경기도 안산시 단원구 이삭로 6 (고잔동) 3층 3450호","Registration of Online Marketing Business":"2023-경기안산-0812","Seller":"EuropeBest (mihye0723)","Shop Name/Representative":"여유여우 / 김미혜"}
+     
         # Iterate through rows and apply the function to the specified rows
         for index, row in df_content.iterrows():
             if row['PLATFORM'] == 'GMARKET EN':
