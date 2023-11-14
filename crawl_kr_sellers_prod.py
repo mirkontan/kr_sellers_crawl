@@ -344,8 +344,8 @@ if entered_password == password:
         df_content['COMPANY_NAME'] = df_content['Shop Name/Representative'].str.split(r'/').str[0] 
               
         # Display the DataFrame
-        st.write('11ST DF')
-        st.write(df_content)
+        # st.write('11ST DF')
+        # st.write(df_content)
 
         # "Business Registration Number":"","Category of Business":"Individual entrepreneurs","Contact NO.":"010-9569-7230What's this Contact NO. info *The phone connection can be difficult because time difference of seller.In this case,contact Customer Service 11ST(1599-0110),quick consultation will help you to be possible.","E-mail":"go.mihyekim@gmail.com","Items completed with authentication":"Business Registration Number, Shop Name","Location of Headquarters":"경기도 안산시 단원구 이삭로 6 (고잔동) 3층 3450호","Registration of Online Marketing Business":"2023-경기안산-0812","Seller":"EuropeBest (mihye0723)","Shop Name/Representative":"여유여우 / 김미혜"}
      
@@ -373,7 +373,7 @@ if entered_password == password:
         # st.write(df_content)
       
         elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
-        st.write(elevenst_df)
+        # st.write(elevenst_df)
     
         # Initialize counts for each type
         count_gmarket = 0
@@ -574,7 +574,7 @@ if entered_password == password:
             #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
             #         if not matching_minishop_row.empty:
             #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
-            st.write(elevenst_df)
+            # st.write(elevenst_df)
             df_content = pd.concat([minishop_df, storenaver_df, interpark_df, elevenst_df], ignore_index=True)
             
             # Create a translator instance
