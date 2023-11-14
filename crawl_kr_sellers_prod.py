@@ -607,6 +607,9 @@ if entered_password == password:
         
             #   newlines from all columns in the DataFrame
             df_content = df_content.replace('\n', '', regex=True)
+
+            df_content = df_content.dropna(subset=['PLATFORM'])
+
             st.write('DF CONTENT')    
             st.dataframe(df_content)
         
