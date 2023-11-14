@@ -336,7 +336,7 @@ if entered_password == password:
                 return None
         
         # Apply the function to the DataFrame
-        elevenst_df['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
+        elevenst_df['SELLER_INFO'] = elevenst_df.apply(extract_seller_info, axis=1)
         # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
         elevenst_df = pd.concat([elevenst_df.drop(['SELLER_INFO'], axis=1), elevenst_df['SELLER_INFO'].apply(pd.Series)], axis=1)
        
