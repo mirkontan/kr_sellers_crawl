@@ -113,6 +113,9 @@ if entered_password == password:
             username = re.sub(r'^.*\=', '', cleaned_url)
         elif 'shopping.naver.com' in cleaned_url:
             platform = 'SHOPPING NAVER'
+        elif 'coupang' in cleaned_url:
+            platform = 'COUPANG'
+            cleaned_url = url
         elif '11st' in cleaned_url:
             platform = '11ST'
             username = re.sub(r'^.*\=', '', cleaned_url)
@@ -347,8 +350,7 @@ if entered_password == password:
         # st.write('11ST DF')
         # st.write(df_content)
 
-        # "Business Registration Number":"","Category of Business":"Individual entrepreneurs","Contact NO.":"010-9569-7230What's this Contact NO. info *The phone connection can be difficult because time difference of seller.In this case,contact Customer Service 11ST(1599-0110),quick consultation will help you to be possible.","E-mail":"go.mihyekim@gmail.com","Items completed with authentication":"Business Registration Number, Shop Name","Location of Headquarters":"경기도 안산시 단원구 이삭로 6 (고잔동) 3층 3450호","Registration of Online Marketing Business":"2023-경기안산-0812","Seller":"EuropeBest (mihye0723)","Shop Name/Representative":"여유여우 / 김미혜"}
-     
+        
         # Iterate through rows and apply the function to the specified rows
         for index, row in df_content.iterrows():
             if row['PLATFORM'] == 'GMARKET EN':
@@ -512,7 +514,11 @@ if entered_password == password:
             interpark_df['COMPANY_REPRESENTATIVE'] = interpark_df['COMPANY_REPRESENTATIVE'].str.split('","').str[0]
         
             interpark_df['USERNAME_MATCH'] = ""
-        
+
+            coupang_df = df_content[df_content['PLATFORM'].isin(['COUPANG', None])]
+            st.write(coupang_df)
+
+            
             def fill_empty_values(store_df, minishop_df, column_name):
                 for index, row in store_df.iterrows():
                     if pd.isna(row[column_name]) or row[column_name].strip() == "" or row[column_name].strip() == "NOT AVAILABLE":
