@@ -423,8 +423,11 @@ if entered_password == password:
             data['SELLER_URL'] = data['SELLER_URL'].tolist() + [None] * (max_length - len(data['SELLER_URL']))
             data['CONTENT_EXTRACTED'] += [None] * (max_length - len(data['CONTENT_EXTRACTED']))
             data['PLATFORM'] += [None] * (max_length - len(data['PLATFORM']))
-        
-            df_content = pd.DataFrame(data)
+           
+            # Create a new DataFrame from the 'data' dictionary
+            new_df = pd.DataFrame(data)
+            # Concatenate the existing 'df_content' DataFrame and the new DataFrame
+            df_content = pd.concat([df_content, new_df], ignore_index=True)
         
         
             
