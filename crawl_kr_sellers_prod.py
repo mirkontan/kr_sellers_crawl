@@ -371,6 +371,9 @@ if entered_password == password:
                     st.write(f"Failed to fetch the URL at index {index}: {response.status_code}")
                     
         # st.write(df_content)
+      
+        elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
+        st.write(elevenst_df)
     
         # Initialize counts for each type
         count_gmarket = 0
@@ -424,8 +427,6 @@ if entered_password == password:
             df_content = pd.DataFrame(data)
         
         
-            elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
-            st.write(elevenst_df)
             
             minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
