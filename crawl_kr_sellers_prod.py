@@ -266,7 +266,9 @@ if entered_password == password:
         
         df_content['SEARCH_URL'] = 'https://browse.gmarket.co.kr/search?keyword=' + df_content['SELLER']
         # st.write(df_content)
-        
+
+        elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
+        # st.write(elevenst_df)
 
 
         def extract_11st_url(row):
@@ -292,7 +294,7 @@ if entered_password == password:
                 return None
         
         # Apply the function to the DataFrame
-        df_content['SELLER_URL'] = df_content.apply(extract_11st_url, axis=1)
+        elevenst_df['SELLER_URL'] = df_content.apply(extract_11st_url, axis=1)
         
         def extract_seller_info(row):
             # Check if the platform is '11ST'
@@ -334,21 +336,21 @@ if entered_password == password:
                 return None
         
         # Apply the function to the DataFrame
-        df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
+        elevenst_df['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
         # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
-        df_content = pd.concat([df_content.drop(['SELLER_INFO'], axis=1), df_content['SELLER_INFO'].apply(pd.Series)], axis=1)
+        elevenst_df = pd.concat([elevenst_df.drop(['SELLER_INFO'], axis=1), elevenst_df['SELLER_INFO'].apply(pd.Series)], axis=1)
        
-        df_content['COMPANY_VAT_N'] = df_content['Business Registration Number'] 
-        df_content['COMPANY_TEL_N'] = df_content['Contact NO.'].str.split("What").str[0]
-        df_content['COMPANY_E-MAIL'] = df_content['E-mail'] 
-        df_content['COMPANY_ADDRESS'] = df_content['Location of Headquarters'] 
-        df_content['COMPANY_REG_N_2'] = df_content['Registration of Online Marketing Business'] 
-        df_content['COMPANY_REPRESENTATIVE'] = df_content['Shop Name/Representative'].str.split(r'/').str[1] 
-        df_content['COMPANY_NAME'] = df_content['Shop Name/Representative'].str.split(r'/').str[0] 
+        elevenst_df['COMPANY_VAT_N'] = elevenst_df['Business Registration Number'] 
+        elevenst_df['COMPANY_TEL_N'] = elevenst_df['Contact NO.'].str.split("What").str[0]
+        elevenst_df['COMPANY_E-MAIL'] = elevenst_df['E-mail'] 
+        elevenst_df['COMPANY_ADDRESS'] = elevenst_df['Location of Headquarters'] 
+        elevenst_df['COMPANY_REG_N_2'] = elevenst_df['Registration of Online Marketing Business'] 
+        elevenst_df['COMPANY_REPRESENTATIVE'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[1] 
+        elevenst_df['COMPANY_NAME'] = elevenst_df['Shop Name/Representative'].str.split(r'/').str[0] 
               
         # Display the DataFrame
         # st.write('11ST DF')
-        # st.write(df_content)
+        # st.write(elevenst_df)
 
         
         # Iterate through rows and apply the function to the specified rows
@@ -374,8 +376,7 @@ if entered_password == password:
                     
         # st.write(df_content)
       
-        elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
-        # st.write(elevenst_df)
+
     
         # Initialize counts for each type
         count_gmarket = 0
