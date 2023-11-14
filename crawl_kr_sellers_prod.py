@@ -268,7 +268,7 @@ if entered_password == password:
         # st.write(df_content)
 
         elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
-        # st.write(elevenst_df)
+        st.write(elevenst_df)
 
 
         def extract_11st_url(row):
