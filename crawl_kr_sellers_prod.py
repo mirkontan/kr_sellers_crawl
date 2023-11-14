@@ -113,7 +113,10 @@ if entered_password == password:
             username = re.sub(r'^.*\=', '', cleaned_url)
         elif 'shopping.naver.com' in cleaned_url:
             platform = 'SHOPPING NAVER'
-        
+        elif '11st' in cleaned_url:
+            platform = '11ST'
+            username = re.sub(r'^.*\=', '', cleaned_url)
+            
         seller_combined = username + '_' + platform
         return cleaned_url, username, platform, seller_combined
     
