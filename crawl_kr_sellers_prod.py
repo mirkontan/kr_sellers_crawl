@@ -336,7 +336,6 @@ if entered_password == password:
                 return None
         # Check if the DataFrame is not empty
         if not elevenst_df.empty:
-
             # Apply the function to the DataFrame
             elevenst_df['SELLER_INFO'] = elevenst_df.apply(extract_seller_info, axis=1)
             # Create separate columns for each piece of information in the 'SELLER_INFO' dictionary
