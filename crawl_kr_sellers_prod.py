@@ -295,31 +295,41 @@ if entered_password == password:
             # Check if the platform is '11ST'
             if row['PLATFORM'] == '11ST':
                 url = row['SELLER_URL']
+        
                 # Make a request to the seller URL
                 response = requests.get(url)
+        
                 if response.status_code == 200:
                     html_content = response.text
                     soup = BeautifulSoup(html_content, 'html.parser')
-                    # Find the table with class 'tbl_prdinfo'
-                    seller_info_table = soup.find('table', class_='tbl_prdinfo')
-                    # Initialize a dictionary to store extracted information
-                    extracted_info = {}
-                    if seller_info_table:
-                        # Find all table rows
-                        rows = seller_info_table.find_all('tr')
-                        # Iterate through rows and extract information
-                        for row in rows:
-                            columns = row.find_all(['th', 'td'])
-                            if columns:
-                                key = columns[0].get_text(strip=True)
-                                value = columns[1].get_text(strip=True)
-                                extracted_info[key] = value
-                    return extracted_info
+                    # Find the <h4> tag with text 'Seller Information'
+                    seller_info_header = soup.find('h4', text='Seller Information')
+                    # Check if the header is found
+                    if seller_info_header:
+                        # Navigate to the parent of the header and find the table
+                        seller_info_table = seller_info_header.find_next('table', class_='tbl_prdinfo')        
+                        # Initialize a dictionary to store extracted information
+                        extracted_info = {}        
+                        if seller_info_table:
+                            # Find all table rows
+                            rows = seller_info_table.find_all('tr')        
+                            # Iterate through rows and extract information
+                            for row in rows:
+                                columns = row.find_all(['th', 'td'])
+                                if columns:
+                                    key = columns[0].get_text(strip=True)
+                                    value = columns[1].get_text(strip=True)
+                                    extracted_info[key] = value        
+                        return extracted_info
+                    else:
+                        print(f"Could not find 'Seller Information' section on the page for {url}")
+                        return None
                 else:
                     print(f"Failed to fetch the URL for {url}: {response.status_code}")
                     return None
             else:
                 return None
+        
         # Apply the function to the DataFrame
         df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
 
