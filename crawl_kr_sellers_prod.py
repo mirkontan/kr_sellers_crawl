@@ -394,11 +394,7 @@ if entered_password == password:
                         st.sidebar.text(f"INTERPARK Sellers Count: {count_interpark}")
                         
                     elif '11st' in url:
-                        content_extracted = extract_11st(url)
-                        data['CONTENT_EXTRACTED'].append(content_extracted)
-                        data['PLATFORM'].append('11ST')
-                        count_11st += 1
-                        st.sidebar.text(f"11ST Sellers Count: {count_11st}")
+                        pass
                     else:
                         data['CONTENT_EXTRACTED'].append('PLATFORM NOT SET YET')
                         data['PLATFORM'].append('UNKNOWN')
