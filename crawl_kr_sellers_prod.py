@@ -337,6 +337,7 @@ if entered_password == password:
        
         df_content['COMPANY_VAT_N'] = df_content['Business Registration Number'] 
         df_content['COMPANY_TEL_N'] = df_content['Contact NO.'].str.replace("What's this Contact NO. info *", '', regex=False)
+        df_content['COMPANY_TEL_N'] = df_content['Contact NO.'].str.replace("The phone connection can be difficult *", '', regex=False)
         df_content['COMPANY_E-MAIL'] = df_content['E-mail'] 
         df_content['COMPANY_ADDRESS'] = df_content['Location of Headquarters'] 
         df_content['COMPANY_REG_N_2'] = df_content['Registration of Online Marketing Business'] 
