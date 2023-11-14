@@ -337,7 +337,7 @@ if entered_password == password:
        
         df_content['COMPANY_VAT_N'] = df_content['Business Registration Number'] 
         df_content['COMPANY_TEL_N'] = df_content['Contact NO.'] 
-        df_content['COMPANY_EMAIL'] = df_content['E-mail'] 
+        df_content['COMPANY_E-MAIL'] = df_content['E-mail'] 
         df_content['COMPANY_ADDRESS'] = df_content['Location of Headquarters'] 
         df_content['COMPANY_REG_N_2'] = df_content['Registration of Online Marketing Business'] 
         df_content['COMPANY_REPRESENTATIVE'] = df_content['Shop Name/Representative'].str.split(r'/').str[1] 
