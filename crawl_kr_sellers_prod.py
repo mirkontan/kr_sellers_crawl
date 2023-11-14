@@ -295,10 +295,8 @@ if entered_password == password:
             # Check if the platform is '11ST'
             if row['PLATFORM'] == '11ST':
                 url = row['SELLER_URL']
-        
                 # Make a request to the seller URL
                 response = requests.get(url)
-        
                 if response.status_code == 200:
                     html_content = response.text
                     soup = BeautifulSoup(html_content, 'html.parser')
@@ -332,7 +330,9 @@ if entered_password == password:
         
         # Apply the function to the DataFrame
         df_content['SELLER_INFO'] = df_content.apply(extract_seller_info, axis=1)
-
+        df_content['COMPANY_VAT_N'] = df_content['Business Registration Number']
+        # "Business Registration Number":"","Category of Business":"Individual entrepreneurs","Contact NO.":"010-9569-7230What's this Contact NO. info *The phone connection can be difficult because time difference of seller.In this case,contact Customer Service 11ST(1599-0110),quick consultation will help you to be possible.","E-mail":"go.mihyekim@gmail.com","Items completed with authentication":"Business Registration Number, Shop Name","Location of Headquarters":"경기도 안산시 단원구 이삭로 6 (고잔동) 3층 3450호","Registration of Online Marketing Business":"2023-경기안산-0812","Seller":"EuropeBest (mihye0723)","Shop Name/Representative":"여유여우 / 김미혜"}
+     
         st.write('11ST DF')
         st.write(df_content)
 
