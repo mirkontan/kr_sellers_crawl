@@ -586,8 +586,8 @@ if entered_password == password:
             #         matching_minishop_row = minishop_df[minishop_df['SELLER_USERNAME'] == username]
             #         if not matching_minishop_row.empty:
             #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
-            # st.write(elevenst_df)
-            df_content = pd.concat([minishop_df, storenaver_df, interpark_df, elevenst_df], ignore_index=True)
+            st.write(elevenst_df)
+            df_content = pd.concat([minishop_df, storenaver_df, interpark_df, elevenst_df, coupang_df], ignore_index=True)
             
             # Create a translator instance
             from googletrans import Translator
