@@ -424,7 +424,8 @@ if entered_password == password:
             df_content = pd.DataFrame(data)
         
         
-        
+            elevenst_df = df_content[df_content['PLATFORM'].isin(['11ST', None])]
+
             minishop_df = df_content[df_content['PLATFORM'].isin(['GMARKET', None])]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.com/').str[1]
             minishop_df['SELLER_USERNAME'] = minishop_df['SELLER_URL'].str.split(r'.kr/').str[1]
@@ -569,7 +570,7 @@ if entered_password == password:
             #         if not matching_minishop_row.empty:
             #             storenaver_df.at[index, 'COMPANY_VAT_N'] = matching_minishop_row.iloc[0]['COMPANY_VAT_N']
         
-            df_content = pd.concat([minishop_df, storenaver_df, interpark_df], ignore_index=True)
+            df_content = pd.concat([minishop_df, storenaver_df, interpark_df, elevenst_df], ignore_index=True)
             
             # Create a translator instance
             from googletrans import Translator
